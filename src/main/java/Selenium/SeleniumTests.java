@@ -64,7 +64,7 @@ public class SeleniumTests {
         try (LogInspector logInspector = new LogInspector(driver)) {
             CompletableFuture<ConsoleLogEntry> consoleFutureResult = new CompletableFuture<>();
             CompletableFuture<JavascriptLogEntry> jsFutureResult = new CompletableFuture<>();
-            //Sets up a listener upon a lonsole log entry
+            //Sets up a listener upon a console log entry
             logInspector.onConsoleEntry(consoleFutureResult::complete);
             logInspector.onJavaScriptLog(jsFutureResult::complete);
 
@@ -78,6 +78,7 @@ public class SeleniumTests {
             System.out.println(" Console log entry: " + logsList.getText() + "\n");
             System.out.println(" JavaScript log entry: " + jsLogEntry.getText() + "\n");
 
+            //console log entry assertions
             Assertions.assertEquals("Hello, world!", logsList.getText());
             Assertions.assertNull(logsList.getRealm());
             Assertions.assertEquals(1, logsList.getArgs().size());
@@ -87,6 +88,7 @@ public class SeleniumTests {
             System.out.println(" Reached middle of test 2" + "\n");
             //Assertions.assertNull(logsList.getStackTrace());
 
+            //JavaScript log entry assertions
             Assertions.assertEquals("Error: Not working", jsLogEntry.getText());
             Assertions.assertEquals("javascript", jsLogEntry.getType());
             Assertions.assertEquals(LogLevel.ERROR, jsLogEntry.getLevel());
