@@ -4,19 +4,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.bidi.LogInspector;
-import org.openqa.selenium.bidi.log.*;
+import org.openqa.selenium.bidi.log.ConsoleLogEntry;
+import org.openqa.selenium.bidi.log.JavascriptLogEntry;
+import org.openqa.selenium.bidi.log.LogLevel;
+import org.openqa.selenium.bidi.log.StackFrame;
+import org.openqa.selenium.bidi.log.StackTrace;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -98,20 +98,6 @@ public class SeleniumTests {
         }
     }
 
-    // Test does not work
-    public void jsExceptionLogger2ndTest() {
-
-        List<JavascriptException> jsExceptionList = new ArrayList<>();
-        // Cast WebDriver to ChromeDriver to access getDevTools
-        ChromeDriver chromeDriver = (ChromeDriver) driver;
-        DevTools devTools = chromeDriver.getDevTools();
-        devTools.getDomains().events().addJavascriptExceptionListener(jsExceptionList::add);
-        driver.get("https://www.selenium.dev/selenium/web/bidi/logEntryAdded.html");
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(_d -> !jsExceptionList.isEmpty());
-
-        System.out.println(" Test 3 is complete. The js Exception list is: " + jsExceptionList + "\n");
-    }
-
     @Test
     public void stackTraceForALog() throws TimeoutException, ExecutionException, InterruptedException {
         try (LogInspector logInspector = new LogInspector(driver)) {
@@ -128,19 +114,16 @@ public class SeleniumTests {
             System.out.println(" JavaScript log: " + jsLogEntry.getText() + "\n");
             for (int a = 0; a < listOfStackFrames.size(); a++) {
                 StackFrame stackFrame = listOfStackFrames.get(a);
-                System.out.println(" Stack trace name " + (a + 1) + " of the login: " + stackFrame.getFunctionName());
+                System.out.println(" Stack trace name " + (a + 1) + " of the login: " + stackFrame.getFunctionName() + "\n");
             }
-
             Assertions.assertNotNull(stackTrace);
             Assertions.assertEquals(3, stackTrace.getCallFrames().size());
-
-
         }
     }
 
     @After
-    public void closeBrowser() {
+    public void closeBrowser() throws InterruptedException {
+        Thread.sleep(500);
         driver.quit();
     }
-
 }
