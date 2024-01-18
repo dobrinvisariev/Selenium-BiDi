@@ -24,12 +24,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class SeleniumTests {
+public class LogTests {
 
     private WebDriver driver;
 
     @Before
-    public void browser() {
+    public void browserDriverSetUp() {
         ChromeOptions options = new ChromeOptions();
         // Enable the Communication between the WebDriver with the browser
         options.setCapability("webSocketUrl", true);
