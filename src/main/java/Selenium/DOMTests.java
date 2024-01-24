@@ -69,6 +69,7 @@ public class DOMTests {
         } catch (NoSuchShadowRootException e) {
             System.out.println("No shadow root found");
         }
+        assert shadowDom != null;
         return shadowDom.findElement(selector);
     }
 
@@ -82,7 +83,7 @@ public class DOMTests {
 
         ((HasLogEvents) driver).onLogEvent(domMutation(e -> domMutations.add(e.getElement())));
 
-        //findElementInShadowDOM(By.cssSelector("[data-testid='uc-accept-all-button']")).click();
+        findElementInShadowDOM(By.cssSelector("[data-testid='uc-accept-all-button']")).click();
 
         System.out.println("OLD DOM MUTATIONS: " + domMutations.size() + "\n");
 
