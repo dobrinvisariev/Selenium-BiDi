@@ -31,6 +31,11 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-devtools-v115</artifactId>
+            <version>4.13.0</version>
+        </dependency>
     </dependencies>
 
 </project>
