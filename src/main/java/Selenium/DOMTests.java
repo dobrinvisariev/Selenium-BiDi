@@ -16,6 +16,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.HasLogEvents;
 
+import javax.sql.rowset.serial.SQLOutputImpl;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -87,7 +88,7 @@ public class DOMTests {
 
         System.out.println("OLD DOM MUTATIONS: " + domMutations.size() + "\n");
 
-        int intervalOfSecondsBetweenTests = 1, maxConsecutiveChecks = 10, minChecks = 3, numberOfNoMutationDetected = 0, checks = 0;
+        int intervalOfSecondsBetweenTests = 1, maxConsecutiveChecks = 10, minChecks = 3, numberOfConsecutiveNoMutationsIntervalsDetected = 0, checks = 0;
         int oldDomMutationsSize = domMutations.size(), newDomMutationsSize;
         int i = 1;
 
@@ -100,15 +101,17 @@ public class DOMTests {
             System.out.println(" NEW DOM MUTATIONS: " + newDomMutationsSize + "\n");
 
             if (oldDomMutationsSize == newDomMutationsSize) {
+
                 System.out.println("Check " + i + ": DOM might be stable, rechecking again... " + "\n");
-                numberOfNoMutationDetected++;
+                numberOfConsecutiveNoMutationsIntervalsDetected++;
                 i++;
             } else {
                 oldDomMutationsSize = newDomMutationsSize;
-                System.out.println("There is a change in the DOM! " + "\n");
+                System.out.println("There is a change in the DOM! ");
                 System.out.println("Reasigning old DOM mutations size with the new mutation size: " + oldDomMutationsSize + "\n");
+                numberOfConsecutiveNoMutationsIntervalsDetected = 0;
             }
-            if (numberOfNoMutationDetected == minChecks) {
+            if (numberOfConsecutiveNoMutationsIntervalsDetected == minChecks) {
                 System.out.println("DOM is stable! " + "\n");
                 break;
             }
