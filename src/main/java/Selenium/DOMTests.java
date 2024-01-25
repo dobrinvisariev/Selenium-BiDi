@@ -3,22 +3,17 @@ package Selenium;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchShadowRootException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.bidi.browsingcontext.BrowsingContext;
-import org.openqa.selenium.bidi.browsingcontext.BrowsingContextInfo;
-import org.openqa.selenium.bidi.browsingcontext.ReadinessState;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.HasLogEvents;
 
-import javax.sql.rowset.serial.SQLOutputImpl;
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.openqa.selenium.devtools.events.CdpEventTypes.domMutation;
@@ -28,7 +23,6 @@ public class DOMTests {
     private WebDriver driver;
     BrowsingContext browserWindow;
     String windowIdentifier;
-    private List<BrowsingContextInfo> windowContextInfoList;
     private CopyOnWriteArrayList<WebElement> domMutations;
 
     @Before
@@ -43,23 +37,6 @@ public class DOMTests {
 
         // Initialize browsing context using the driver and the window identifier
         browserWindow = new BrowsingContext(driver, windowIdentifier);
-    }
-
-
-    public void browsingContextTest() {
-
-        browserWindow.navigate("https://www.trivago.co.uk", ReadinessState.COMPLETE);
-        //Stores the number of open windows and/or tabs
-
-        windowContextInfoList = browserWindow.getTree();
-
-        System.out.println("Window Context Info List: " + windowContextInfoList.size() + "\n");
-
-        BrowsingContextInfo windowInfo = windowContextInfoList.get(0);
-        Assertions.assertEquals(0, windowInfo.getChildren().size());
-        Assertions.assertEquals(1, windowContextInfoList.size());
-        Assertions.assertEquals(windowIdentifier, windowInfo.getId());
-        Assertions.assertTrue(windowInfo.getUrl().contains("trivago"));
     }
 
     public WebElement findElementInShadowDOM(By selector) {
