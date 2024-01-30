@@ -37,7 +37,7 @@ public class LogTests {
     }
 
     @Test
-    public void testJavaScriptConsoleLog() {
+    public void testConsoleLogListening() {
 
         CopyOnWriteArrayList<ConsoleLogEntry> logsList = new CopyOnWriteArrayList<>();
 
@@ -47,7 +47,6 @@ public class LogTests {
 
         driver.get("https://www.selenium.dev/selenium/web/bidi/logEntryAdded.html");
         driver.findElement(By.id("consoleLog")).click();
-        driver.findElement(By.id("consoleError")).click();
         // wait until the logs list has some entry
         new WebDriverWait(driver, Duration.ofSeconds(10)).until(_d -> !logsList.isEmpty());
         Assertions.assertEquals("Hello, world!", logsList.get(0).getText());
