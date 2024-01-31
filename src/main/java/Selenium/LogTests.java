@@ -36,6 +36,12 @@ public class LogTests {
         driver = new ChromeDriver(options);
     }
 
+    @After
+    public void closeBrowser() throws InterruptedException {
+        Thread.sleep(300);
+        driver.quit();
+    }
+
     @Test
     public void testConsoleLogListening() {
 
@@ -118,11 +124,5 @@ public class LogTests {
             Assertions.assertNotNull(stackTrace);
             Assertions.assertEquals(3, stackTrace.getCallFrames().size());
         }
-    }
-
-    @After
-    public void closeBrowser() throws InterruptedException {
-        Thread.sleep(500);
-        driver.quit();
     }
 }

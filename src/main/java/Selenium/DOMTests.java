@@ -97,7 +97,7 @@ public class DOMTests {
 
     @After
     public void closeBrowser() throws InterruptedException {
-        Thread.sleep(100);
+        Thread.sleep(200);
         driver.quit();
     }
 
