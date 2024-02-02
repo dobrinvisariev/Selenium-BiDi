@@ -8,7 +8,6 @@ import org.openqa.selenium.NoSuchShadowRootException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.bidi.browsingcontext.BrowsingContext;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.HasLogEvents;
@@ -21,8 +20,6 @@ import static org.openqa.selenium.devtools.events.CdpEventTypes.domMutation;
 public class DOMTests {
 
     private WebDriver driver;
-    BrowsingContext browserWindow;
-    String windowIdentifier;
     private CopyOnWriteArrayList<WebElement> domMutations;
 
     @Before
@@ -31,12 +28,12 @@ public class DOMTests {
         // Enable the Communication between the WebDriver with the browser
         options.setCapability("webSocketUrl", true);
         driver = new ChromeDriver(options);
+    }
 
-        // Get the current window identifier
-        windowIdentifier = driver.getWindowHandle();
-
-        // Initialize browsing context using the driver and the window identifier
-        browserWindow = new BrowsingContext(driver, windowIdentifier);
+    @After
+    public void closeBrowser() throws InterruptedException {
+        Thread.sleep(200);
+        driver.quit();
     }
 
     public WebElement findElementInShadowDOM(By selector) {
@@ -75,7 +72,7 @@ public class DOMTests {
             checks++;
             newDomMutationsSize = domMutations.size();
 
-            System.out.println(" NEW DOM MUTATIONS: " + newDomMutationsSize + "\n");
+            System.out.println("NEW DOM MUTATIONS: " + newDomMutationsSize + "\n");
 
             if (oldDomMutationsSize == newDomMutationsSize) {
 
@@ -94,11 +91,4 @@ public class DOMTests {
             }
         }
     }
-
-    @After
-    public void closeBrowser() throws InterruptedException {
-        Thread.sleep(200);
-        driver.quit();
-    }
-
 }

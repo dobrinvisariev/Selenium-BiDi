@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.bidi.LogInspector;
@@ -50,7 +51,6 @@ public class LogTests {
         try (LogInspector logInspector = new LogInspector(driver)) {
             logInspector.onConsoleEntry(logsList::add);
         }
-
         driver.get("https://www.selenium.dev/selenium/web/bidi/logEntryAdded.html");
         driver.findElement(By.id("consoleLog")).click();
         // wait until the logs list has some entry
@@ -66,11 +66,12 @@ public class LogTests {
     }
 
     @Test
-    public void testToListenToJSExceptionAndConsoleLog() throws InterruptedException, ExecutionException, TimeoutException {
+    public void testToListenToJSLogAndConsoleLog() throws InterruptedException, ExecutionException, TimeoutException {
+
+        CompletableFuture<ConsoleLogEntry> consoleFutureResult = new CompletableFuture<>();
+        CompletableFuture<JavascriptLogEntry> jsFutureResult = new CompletableFuture<>();
+
         try (LogInspector logInspector = new LogInspector(driver)) {
-            CompletableFuture<ConsoleLogEntry> consoleFutureResult = new CompletableFuture<>();
-            CompletableFuture<JavascriptLogEntry> jsFutureResult = new CompletableFuture<>();
-            //Sets up a listener upon a console log entry
             logInspector.onConsoleEntry(consoleFutureResult::complete);
             logInspector.onJavaScriptLog(jsFutureResult::complete);
 
@@ -78,48 +79,45 @@ public class LogTests {
             driver.findElement(By.id("consoleLog")).click();
             driver.findElement(By.id("jsException")).click();
 
-            ConsoleLogEntry logsList = consoleFutureResult.get(10, TimeUnit.SECONDS);
-            JavascriptLogEntry jsExceptionList = jsFutureResult.get(10, TimeUnit.SECONDS);
+            ConsoleLogEntry logs = consoleFutureResult.get(10, TimeUnit.SECONDS);
+            JavascriptLogEntry jsLogs = jsFutureResult.get(10, TimeUnit.SECONDS);
 
-            System.out.println(" Console log entry: " + logsList.getText() + "\n");
-            System.out.println(" JavaScript log entry: " + jsExceptionList.getText() + "\n");
+            System.out.println(" Console log entry: " + logs.getText() + "\n");
+            System.out.println(" JavaScript log entry: " + jsLogs.getText() + "\n");
 
             //console log entry assertions
-            Assertions.assertEquals("Hello, world!", logsList.getText());
-            Assertions.assertNull(logsList.getRealm());
-            Assertions.assertEquals(1, logsList.getArgs().size());
-            Assertions.assertEquals("console", logsList.getType());
-            Assertions.assertEquals("log", logsList.getMethod());
-
-            System.out.println(" TEST 2: Console log entry assertions passed! " + "\n");
-            //Assertions.assertNull(logsList.getStackTrace());
+            Assertions.assertEquals("Hello, world!", logs.getText());
+            Assertions.assertNull(logs.getRealm());
+            Assertions.assertEquals(1, logs.getArgs().size());
+            Assertions.assertEquals("console", logs.getType());
+            Assertions.assertEquals("log", logs.getMethod());
 
             //JavaScript log entry assertions
-            Assertions.assertEquals("Error: Not working", jsExceptionList.getText());
-            Assertions.assertEquals("javascript", jsExceptionList.getType());
-            Assertions.assertEquals(LogLevel.ERROR, jsExceptionList.getLevel());
-
-            System.out.println(" TEST 2: JavaScript log entry assertions passed! End of the test! " + "\n");
+            Assertions.assertEquals("Error: Not working", jsLogs.getText());
+            Assertions.assertEquals("javascript", jsLogs.getType());
+            Assertions.assertEquals(LogLevel.ERROR, jsLogs.getLevel());
         }
     }
 
     @Test
     public void stackTraceForALog() throws TimeoutException, ExecutionException, InterruptedException {
+
+        CompletableFuture<JavascriptLogEntry> jsFutureEntry = new CompletableFuture<>();
+
         try (LogInspector logInspector = new LogInspector(driver)) {
-            CompletableFuture<JavascriptLogEntry> jsFuture = new CompletableFuture<>();
-            logInspector.onJavaScriptException(jsFuture::complete);
+            logInspector.onJavaScriptException(jsFutureEntry::complete);
 
             driver.get("https://www.selenium.dev/selenium/web/bidi/logEntryAdded.html");
             driver.findElement(By.id("LogWithStacktrace")).click();
 
-            JavascriptLogEntry jsLogEntry = jsFuture.get(10, TimeUnit.SECONDS);
+            JavascriptLogEntry jsLogEntry = jsFutureEntry.get(10, TimeUnit.SECONDS);
 
             StackTrace stackTrace = jsLogEntry.getStackTrace();
             List<StackFrame> listOfStackFrames = stackTrace.getCallFrames();
             System.out.println(" JavaScript log: " + jsLogEntry.getText() + "\n");
             for (int a = 0; a < listOfStackFrames.size(); a++) {
                 StackFrame stackFrame = listOfStackFrames.get(a);
-                System.out.println(" Stack trace name " + (a + 1) + " of the login: " + stackFrame.getFunctionName() + "\n");
+                System.out.println(" Stack trace " + (a + 1) + " " + stackFrame.getFunctionName() + "\n");
             }
             Assertions.assertNotNull(stackTrace);
             Assertions.assertEquals(3, stackTrace.getCallFrames().size());
