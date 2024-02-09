@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.bidi.LogInspector;
@@ -38,8 +37,7 @@ public class LogTests {
     }
 
     @After
-    public void closeBrowser() throws InterruptedException {
-        Thread.sleep(300);
+    public void closeBrowser() {
         driver.quit();
     }
 

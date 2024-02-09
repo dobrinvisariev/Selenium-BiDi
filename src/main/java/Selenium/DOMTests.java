@@ -18,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static org.openqa.selenium.devtools.events.CdpEventTypes.domMutation;
 
 public class DOMTests {
-
     private WebDriver driver;
     private CopyOnWriteArrayList<WebElement> domMutations;
 
@@ -31,8 +30,7 @@ public class DOMTests {
     }
 
     @After
-    public void closeBrowser() throws InterruptedException {
-        Thread.sleep(200);
+    public void closeBrowser() {
         driver.quit();
     }
 
