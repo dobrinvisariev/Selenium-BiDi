@@ -55,11 +55,9 @@ public class LogTests {
         new WebDriverWait(driver, Duration.ofSeconds(10)).until(_d -> !logsList.isEmpty());
         Assertions.assertEquals("Hello, world!", logsList.get(0).getText());
 
-        int i = 1;
-        for (ConsoleLogEntry log : logsList) {
 
-            System.out.println(" TEST 1: LOG LIST " + i + ": " + log.getText() + "\n");
-            i++;
+        for (ConsoleLogEntry log : logsList) {
+            System.out.println(" Log list: " + log.getText() + "\n");
         }
     }
 
