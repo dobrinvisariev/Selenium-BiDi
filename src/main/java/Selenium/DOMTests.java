@@ -53,11 +53,8 @@ public class DOMTests {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         domMutations = new CopyOnWriteArrayList<>();
-
         ((HasLogEvents) driver).onLogEvent(domMutation(e -> domMutations.add(e.getElement())));
-
         findElementInShadowDOM(By.cssSelector("[data-testid='uc-accept-all-button']")).click();
-
         System.out.println("OLD DOM MUTATIONS: " + domMutations.size() + "\n");
 
         int intervalOfSecondsBetweenTests = 1, maxConsecutiveChecks = 10, minChecks = 3, numberOfConsecutiveNoMutationsIntervalsDetected = 0, checks = 0;
@@ -69,11 +66,8 @@ public class DOMTests {
             Thread.sleep(intervalOfSecondsBetweenTests * 1000);
             checks++;
             newDomMutationsSize = domMutations.size();
-
             System.out.println("NEW DOM MUTATIONS: " + newDomMutationsSize + "\n");
-
             if (oldDomMutationsSize == newDomMutationsSize) {
-
                 System.out.println("Check " + i + ": DOM might be stable, rechecking again... " + "\n");
                 numberOfConsecutiveNoMutationsIntervalsDetected++;
                 i++;
